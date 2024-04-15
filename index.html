@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tax Calculator</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <style>
+      .tooltip-icon {
+        position: relative;
+        margin-left: 4px;
+        cursor: pointer;
+      }
+
+      .error-icon {
+        position: absolute;
+        top: 50%;
+        right: 45px;
+        transform: translateY(-50%);
+        color: red;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <h2 class="text-center mb-4">Tax Calculator</h2>
+          <form id="taxForm">
+            <div class="form-group">
+              <label for="grossIncome">Gross Annual Income (₹)</label>
+              <div class="input-group">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="grossIncome"
+                  name="grossIncome"
+                  required
+                  oninput="validateInput(this, $('#grossIncomeError'))"
+                />
+                <div
+                  class="error-icon"
+                  id="grossIncomeError"
+                  data-toggle="tooltip"
+                  data-placement="left"
+                  title=""
+                ></div>
+                <div class="input-group-append">
+                  <span
+                    class="input-group-text tooltip-icon"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title="Enter your gross annual income after deductions."
+                  >
+                    <i class="fas fa-question-circle"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <!-- Repeat similar structure for other input fields -->
+            <div class="form-group">
+              <label for="extraIncome">Extra Income (₹)</label>
+              <div class="input-group">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="extraIncome"
+                  name="extraIncome"
+                  required
+                  oninput="validateInput(this, $('#extraIncomeError'))"
+                />
+                <div
+                  class="error-icon"
+                  id="extraIncomeError"
+                  data-toggle="tooltip"
+                  data-placement="left"
+                  title=""
+                ></div>
+                <div class="input-group-append">
+                  <span
+                    class="input-group-text tooltip-icon"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title="Enter any extra income you received."
+                  >
+                    <i class="fas fa-question-circle"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="deductions">Deductions (₹)</label>
+              <div class="input-group">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="deductions"
+                  name="deductions"
+                  required
+                  oninput="validateInput(this, $('#deductionsError'))"
+                />
+                <div
+                  class="error-icon"
+                  id="deductionsError"
+                  data-toggle="tooltip"
+                  data-placement="left"
+                  title=""
+                ></div>
+                <div class="input-group-append">
+                  <span
+                    class="input-group-text tooltip-icon"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title="Enter any deductions you want to apply."
+                  >
+                    <i class="fas fa-question-circle"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="age">Age</label>
+              <div class="input-group">
+                <select class="form-control" id="age" name="age" required>
+                  <option value="" disabled selected>
+                    Select your age group
+                  </option>
+                  <option value="<40">&lt; 40</option>
+                  <option value=">=40 & <60">&ge; 40 &lt; 60</option>
+                  <option value=">=60">&ge; 60</option>
+                </select>
+                <div
+                  class="error-icon"
+                  id="ageError"
+                  data-toggle="tooltip"
+                  data-placement="left"
+                  title=""
+                ></div>
+                <div class="input-group-append">
+                  <span
+                    class="input-group-text tooltip-icon"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title="Select your age group."
+                  >
+                    <i class="fas fa-question-circle"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <button
+              type="submit"
+              id="submitButton"
+              class="btn btn-primary btn-block"
+            >
+              Calculate Tax
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tax Calculation Modal -->
+    <div id="taxModal" class="modal fade" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Tax Calculation Result</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p id="taxAmount">Tax amount will be displayed here.</p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+      // Function to validate input fields
+      function validateInput(inputField, errorIcon) {
+        // Check if input is a number
+        if (isNaN(inputField.value)) {
+          // Show error icon with exclamation mark
+          errorIcon
+            .css("display", "block")
+            .html('<i class="fas fa-exclamation-circle"></i>');
+          // Set error message as a data attribute
+          errorIcon.data("error-message", "Please enter a valid number");
+          // Enable Bootstrap tooltip
+          errorIcon.tooltip("show");
+          // Disable form submission
+          $("#submitButton").prop("disabled", true);
+          return;
+        }
+
+        // Check if input is empty
+        if (!inputField.value) {
+          // Show error icon with exclamation mark
+          errorIcon
+            .css("display", "block")
+            .html('<i class="fas fa-exclamation-circle"></i>');
+          // Set error message as a data attribute
+          errorIcon.data("error-message", "This field is mandatory");
+          // Enable Bootstrap tooltip
+          errorIcon.tooltip("show");
+          // Disable form submission
+          $("#submitButton").prop("disabled", true);
+          return;
+        }
+
+        // Hide error icon if no errors
+        errorIcon.css("display", "none");
+        // Hide Bootstrap tooltip
+        errorIcon.tooltip("hide");
+        // Enable form submission
+        $("#submitButton").prop("disabled", false);
+      }
+
+      $(document).ready(function () {
+        // Initialize tooltips
+        $('[data-toggle="tooltip"]').tooltip({
+          trigger: "hover",
+          title: function () {
+            // Get the error message from the error icon's data attribute
+            return $(this).data("error-message");
+          },
+        });
+
+        // Function to calculate tax
+        function calculateTax(grossIncome, extraIncome, deductions, age) {
+          var tax = 0;
+          if (grossIncome + extraIncome - deductions > 800000) {
+            switch (age) {
+              case "<40":
+                tax = 0.3 * (grossIncome + extraIncome - deductions - 800000);
+                break;
+              case ">=40 & <60":
+                tax = 0.4 * (grossIncome + extraIncome - deductions - 800000);
+                break;
+              case ">=60":
+                tax = 0.1 * (grossIncome + extraIncome - deductions - 800000);
+                break;
+            }
+          }
+          return tax;
+        }
+
+        // Function to handle form submission
+        $("#taxForm").submit(function (event) {
+          // Prevent default form submission
+          event.preventDefault();
+
+          // Get input values
+          var grossIncome = parseFloat($("#grossIncome").val());
+          var extraIncome = parseFloat($("#extraIncome").val());
+          var deductions = parseFloat($("#deductions").val());
+          var age = $("#age").val();
+
+          // Validate input fields
+          validateInput(
+            document.getElementById("grossIncome"),
+            $("#grossIncomeError")
+          );
+          validateInput(
+            document.getElementById("extraIncome"),
+            $("#extraIncomeError")
+          );
+          validateInput(
+            document.getElementById("deductions"),
+            $("#deductionsError")
+          );
+
+          // Check if age is selected
+          if (!age) {
+            // Show error icon with exclamation mark
+            $("#ageError")
+              .css("display", "block")
+              .html('<i class="fas fa-exclamation-circle"></i>');
+            // Set error message as a data attribute
+            $("#ageError").data(
+              "error-message",
+              "Please select your age group"
+            );
+            // Enable Bootstrap tooltip
+            $("#ageError").tooltip("show");
+            return;
+          } else {
+            // Hide error icon if no errors
+            $("#ageError").css("display", "none");
+            // Hide Bootstrap tooltip
+            $("#ageError").tooltip("hide");
+          }
+
+          // Check if any error icons are visible
+          var hasErrors =
+            $(".error-icon").filter(function () {
+              return $(this).css("display") !== "none";
+            }).length > 0;
+
+          // If no errors, calculate tax
+          if (!hasErrors) {
+            var taxAmount = calculateTax(
+              grossIncome,
+              extraIncome,
+              deductions,
+              age
+            );
+            // Display tax amount in modal
+            $("#taxAmount").text("Tax amount: ₹" + taxAmount.toFixed(2));
+            // Show tax calculation modal
+            $("#taxModal").modal("show");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
